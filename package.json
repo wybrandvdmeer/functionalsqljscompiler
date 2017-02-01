@@ -1,0 +1,18 @@
+{
+  "name": "functionalsqlcompiler",
+  "version": "0.1.0",
+  "description": "Functionalsql compiler written in js.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/mocha --reporter spec"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0"
+  }
+}
