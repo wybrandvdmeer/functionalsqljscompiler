@@ -2,8 +2,6 @@ var expect  = require("chai").expect;
 var compiler = require("../app/functionalsql.js");
 var chopper = require("../app/chopper.js");
 
-/*
-
 describe("Test chopper.", function () {
 	it("Test chopper.", function() {
 		expect(chopper.chop('abc')).to.deep.equal(['abc']);
@@ -18,7 +16,6 @@ describe("Test Compiler IO.", function () {
 		expect(compiler.parse.bind(compiler)).to.throw(Error, /No statement defined./);
 	});
 }); 
-*/
 
 describe("Test select.", function() {
 	it("Full select.", function() {

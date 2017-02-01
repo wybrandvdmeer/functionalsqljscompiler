@@ -13,13 +13,16 @@ exports.parse = function(statementString) {
  		throw new Error('No statement defined.');
  	}
 
- 	functionsArr.set('(', new functions.Statement());
+ 	functionsArr.set('(', functions.statement);
 
  	tokens = chopper.chop(statementString);
 
- 	parseFunction(getFunction('('));
- 	
- 	return 'SELECT * FROM a';
+ 	var statement = getFunction('(');
+
+ 	parseFunction(statement);
+ 	statement.execute();
+
+ 	return statement.sql;
 };
 
 function pop() {
