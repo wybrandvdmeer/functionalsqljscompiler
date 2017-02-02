@@ -1,31 +1,58 @@
 exports.chop = function(statement) {
 	var result = [];
-	var idx1=0;
-	var quotedArea = false;
+	var argument=-1;
+	var quoted = false;
+	var nextArgument=true;
 			
-	
 	for(var idx2 in statement) {
 
 		var c = statement[idx2];
 
 		if(c === '\'') {
-			quotedArea = !quotedArea;
+			quoted = !quoted;
 			continue;
 		}
-	
-		if((c === '\t' || c === ' ' || c === '\n') && !quotedArea ) {
-			idx1++;	
-		} else {
-			if(result[idx1] === undefined) {
-				result[idx1] = '';
+
+		if(!quoted) {
+
+			if(isWhiteSpace(c)) {
+				nextArgument = true;
+				continue;
 			}
-			result[idx1] += c;
+
+			if(isSpecialChar(c)) {
+				nextArgument = true;
+			}
+		}
+
+		if(nextArgument) {
+			argument++;
+		}
+			
+		nextArgument = false;
+
+		if(result[argument] === undefined) {
+			result[argument] = '';
+		}
+
+		result[argument] += c;
+
+		if(!quoted && isSpecialChar(c)) {
+			nextArgument = true;
 		}
 	}
 		
-	if(quotedArea) {
+	if(quoted) {
 		throw new Error('Unmatched quot.');
 	}
 
 	return result;
 };
+
+function isWhiteSpace(c) {
+	return c === '\t' || c === '\n' || c === ' ' || c === '\n';
+}
+
+function isSpecialChar(c) {
+	return c === '(' || c === ')' || c === ',';
+}

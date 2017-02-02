@@ -1,7 +1,9 @@
-var functions = require("./functions.js");
+var statementLib = require("./functions/statement.js");
+var joinLib = require("./functions/join.js");
 var chopper = require("./chopper.js");
 
-var FUNCTION_HAS_NO_OPENING_BRACKET = "Function has no opening bracket.";
+var ERR_FUNCTION_HAS_NO_OPENING_BRACKET = "Function has no opening bracket.";
+var ERR_UNEXPECTED_END_OF_FUNCTION = "Unexpected end of function.";
 
 var statementStack = [];
 var functionsArr = new Map();
@@ -13,11 +15,11 @@ exports.parse = function(statementString) {
  		throw new Error('No statement defined.');
  	}
 
- 	functionsArr.set('(', functions.statement);
+ 	var statement = Object.create(statementLib.statement);
+ 	functionsArr.set('(', statement);
+ 	functionsArr.set('join', Object.create(joinLib.join));
 
  	tokens = chopper.chop(statementString);
-
- 	var statement = getFunction('(');
 
  	parseFunction(statement);
  	statement.execute();
@@ -29,7 +31,7 @@ function pop() {
 	if(tokens.length === 0) {
 		return null;
 	}	
-	return tokens.pop();
+	return tokens.shift();
 }
 
 function getFunction(token) {
@@ -39,10 +41,12 @@ function getFunction(token) {
 function parseFunction(currentFunction) {
 	var token;
 
-	if(currentFunction !== getFunction('(')) {
+	if(Object.getPrototypeOf(currentFunction) !== statementLib.statement) {
 		if(pop() !== '(') {
-			throw new Error(FUNCTION_HAS_NO_OPENING_BRACKET);
+			throw new Error(ERR_FUNCTION_HAS_NO_OPENING_BRACKET);
 		}
+	} else {
+		statementStack.push(currentFunction);	
 	}
 
 	do {
@@ -53,10 +57,37 @@ function parseFunction(currentFunction) {
 		var processingFunction = getFunction(token);
 
 		if(processingFunction !== undefined) {
+			processingFunction = Object.create(processingFunction);
+			processingFunction.compiler = this;
+
 			parseFunction(processingFunction);
+
+			processingFunction.execute();
 		} else {
 			currentFunction.process(token);	
 		}
 
+		if(Object.getPrototypeOf(currentFunction) === statementLib.statement) {
+			continue;
+		}
+
+		/* After processing argument of function, expect ',' or ')'. 
+		*/
+		token = pop();
+
+		switch(token !== null ? token : "" ) {
+			case ',':
+			case ')':
+			break;
+			default: throw new Error(ERR_UNEXPECTED_END_OF_FUNCTION);
+		}
 	} while(token !== ")");
+
+	if(Object.getPrototypeOf(currentFunction) === statementLib.statement) {
+		statementStack.pop(currentFunction);	
+	}
 }
+
+var getStatement = function() {
+	return statementStack[statementStack.length];
+};
