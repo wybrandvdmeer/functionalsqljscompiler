@@ -32,7 +32,7 @@ exports.join.execute = function() {
   var joinTable = this.consumers[0].values[0];
   var joinFieldDriveTable = this.consumers[1].values[0];
   var joinFieldJoinTable = this.consumers[2].values[0];
-  var alias = this.compiler.getStatement().getAlias(joinTable);
+  var alias = this.getStatement().getAlias(joinTable);
 
-  this.compiler.getStatement().addFromClause(joinTable + alias);
+  this.getStatement().addFromClause(joinTable + ' ' + alias);
 };

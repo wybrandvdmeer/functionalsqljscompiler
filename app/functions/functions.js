@@ -29,6 +29,7 @@ exports.Consumer = {
 exports.FSFunction = {
 	argument: 0,
 	consumers: [],
+	getStatement: undefined,
 	process: function(token) {
 		if(this.consumers[this.argument] === undefined) {
 			throw new Error(ERR_FUNCTION_HAS_TOO_MANY_ARGUMENTS);
@@ -41,8 +42,7 @@ exports.FSFunction = {
 		if(consumer.singleValue) {
 			this.argument++;
 		} 
-	},
-	compiler: undefined
+	}
 };
 
 

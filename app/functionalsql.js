@@ -58,7 +58,7 @@ function parseFunction(currentFunction) {
 
 		if(processingFunction !== undefined) {
 			processingFunction = Object.create(processingFunction);
-			processingFunction.compiler = this;
+			processingFunction.getStatement = getStatement;
 
 			parseFunction(processingFunction);
 
@@ -89,5 +89,5 @@ function parseFunction(currentFunction) {
 }
 
 var getStatement = function() {
-	return statementStack[statementStack.length];
+	return statementStack[statementStack.length - 1];
 };
