@@ -1,6 +1,12 @@
 var functions = require("./functions.js");
 
 exports.join = Object.create(functions.FSFunction);
+
+exports.join.joinTable = undefined;
+exports.join.joinFieldDriveTable = undefined;
+exports.join.joinFieldJoinTable = undefined;
+
+exports.join.consumers = [];
 exports.join.consumers[0] = Object.create(functions.Consumer,
 {
   singleValue: {
@@ -8,18 +14,33 @@ exports.join.consumers[0] = Object.create(functions.Consumer,
   },
   mandatory: {
     value:  true
+  },
+  processor: {
+    value: (token) => {
+      exports.join.joinTable = token;
+    }
   }
 });
 exports.join.consumers[1] = Object.create(functions.Consumer,
 {
   singleValue: {
     value:  true
+  },
+  processor: {
+    value: (token) => {
+      exports.join.joinFieldDriveTable = token;
+    }
   }
 });
 exports.join.consumers[2] = Object.create(functions.Consumer,
 {
   singleValue: {
     value:  true
+  },
+  processor: {
+    value: (token) => {
+      exports.join.joinFieldJoinTable = token;
+    }
   }
 });
 exports.join.consumers[3] = Object.create(functions.Consumer,
@@ -29,10 +50,6 @@ exports.join.consumers[3] = Object.create(functions.Consumer,
   }
 });
 exports.join.execute = function() {
-  var joinTable = this.consumers[0].values[0];
-  var joinFieldDriveTable = this.consumers[1].values[0];
-  var joinFieldJoinTable = this.consumers[2].values[0];
-  var alias = this.getStatement().getAlias(joinTable);
-
-  this.getStatement().addFromClause(joinTable + ' ' + alias);
+  var alias = this.getStatement().getAlias(exports.join.joinTable);
+  this.getStatement().addFromClause(exports.join.joinTable + ' ' + alias);
 };

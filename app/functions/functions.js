@@ -16,11 +16,14 @@ exports.Consumer = {
 		}
 		return false;
 	},
+	processor: undefined,
 	consume: function(token) {
 		if(this.onlyFunctions && !this.isFunction(token)) {
 			throw new Error(ERR_EXPECTING_A_FUNCTION_INSTEAD_OF + 'token');
 		}
-		this.values.push(token);
+		if(this.processor !== undefined) {
+			this.processor(token);
+		}
 	},
 	execute: function() {
 	}
